@@ -39,10 +39,8 @@ class PlayState extends FlxState
     var tmpMap:TiledObjectLayer = cast _map.getLayer("entities");
     for (e in tmpMap.objects)
     {
-      // trace(e, e.name,e.type, e.x, e.y, e.layer);
       placeEntities(e.name, e.type, e.xmlData.x);
     }
-    // _map.loadEntities(placeEntities, "entities");
     add(_player);
     FlxG.camera.follow(_player, TOPDOWN, 1);
 		super.create();
@@ -52,9 +50,6 @@ class PlayState extends FlxState
   {
     var x:Int = Std.parseInt(entityData.get("x"));
     var y:Int = Std.parseInt(entityData.get("y"));
-    // FlxG.watch.add(_player, "x");
-    // FlxG.watch.add(_player, "y");
-    // trace(entityName);
     if (entityType == "player")
     {
       _player.x = x;
@@ -83,5 +78,18 @@ class PlayState extends FlxState
 		super.update(elapsed);
     FlxG.collide(_player, _mWalls);
     FlxG.overlap(_player, _grpCoins, playerTouchCoin);
+    FlxG.collide(_grpEnemies, _mWalls);
+    _grpEnemies.forEachAlive(checkEnemyVision);
 	}
+
+  private function checkEnemyVision(e:Enemy):Void
+  {
+    if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint()))
+    {
+      e.seesPlayer = true;
+      e.playerPos.copyFrom(_player.getMidpoint());
+    }
+    else
+      e.seesPlayer = false;
+  }
 }
