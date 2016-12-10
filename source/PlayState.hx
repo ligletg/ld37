@@ -18,7 +18,7 @@ import flixel.addons.editors.tiled.TiledObjectLayer;
 
 class PlayState extends FlxState
 {
-  private var _player:Player;
+  private var _player:PlayerGroup;
   private var _map:FlxOgmoLoader;
   private var _mWalls:FlxTilemap;
   private var _grpCoins:FlxTypedGroup<Coin>;
@@ -42,10 +42,17 @@ class PlayState extends FlxState
 
     _grpEnemies = new FlxTypedGroup<Enemy>();
     add(_grpEnemies);
+    FlxG.watch.add(_grpEnemies, "x");
+    FlxG.watch.add(_grpEnemies, "y");
 
-    _player = new Player();
-    _map.loadEntities(placeEntities, "entities");
+    _player = new PlayerGroup();
+    FlxG.watch.add(_player, "x");
+    FlxG.watch.add(_player, "y");
     add(_player);
+    trace(_player.getPlayer());
+    _map.loadEntities(placeEntities, "entities");
+    trace(_player.getPlayer());
+
 
     FlxG.camera.follow(_player, TOPDOWN, 1);
 
@@ -63,8 +70,7 @@ class PlayState extends FlxState
     var y:Int = Std.parseInt(entityData.get("y"));
     if (entityName == "player")
     {
-      _player.x = x;
-      _player.y = y;
+      _player.getPlayer().setPosition(x, y);
     }
     else if (entityName == "coin")
     {
@@ -90,8 +96,8 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
-    FlxG.collide(_player, _mWalls);
-    FlxG.overlap(_player, _grpCoins, playerTouchCoin);
+    FlxG.collide(_player.getPlayer(), _mWalls);
+    FlxG.overlap(_player.getPlayer(), _grpCoins, playerTouchCoin);
     FlxG.collide(_grpEnemies, _mWalls);
     _grpEnemies.forEachAlive(checkEnemyVision);
     if (FlxG.keys.anyPressed([ESCAPE]))
@@ -102,16 +108,16 @@ class PlayState extends FlxState
     }
     if (FlxG.mouse.pressed)
     {
-      _player.shoot();
+      // _player.shoot();
     }
 	}
 
   private function checkEnemyVision(e:Enemy):Void
   {
-    if (_mWalls.ray(e.getMidpoint(), _player.getMidpoint()))
+    if (_mWalls.ray(e.getMidpoint(), _player.getPlayer().getMidpoint()))
     {
       e.seesPlayer = true;
-      e.playerPos.copyFrom(_player.getMidpoint());
+      e.playerPos.copyFrom(_player.getPlayer().getMidpoint());
     }
     else
       e.seesPlayer = false;
