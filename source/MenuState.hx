@@ -6,6 +6,7 @@ import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.math.FlxMath;
+import flixel.util.FlxColor;
 
 class MenuState extends FlxState
 {
@@ -21,7 +22,9 @@ class MenuState extends FlxState
 
   private function clickPLay():Void
   {
-    FlxG.switchState(new PlayState());
+    FlxG.camera.fade(FlxColor.BLACK, .33, false, function() {
+      FlxG.switchState(new PlayState());
+    });
   }
 
 	override public function update(elapsed:Float):Void

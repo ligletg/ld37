@@ -13,6 +13,8 @@ import flixel.addons.editors.tiled.TiledObjectLayer;
 import flixel.tile.FlxTilemap;
 import flixel.tile.FlxBaseTilemap.FlxTilemapAutoTiling;
 import flixel.group.FlxGroup;
+import flixel.util.FlxColor;
+import flixel.system.FlxSound;
 
 class PlayState extends FlxState
 {
@@ -24,10 +26,11 @@ class PlayState extends FlxState
   private var _hud:HUD;
   private var _money:Int = 0;
   private var _health:Int = 3;
+  private var _sndCoin:FlxSound;
 
 	override public function create():Void
 	{
-    _map = new TiledMap(AssetPaths.map__tmx);
+    _map = new TiledMap(AssetPaths.map2__tmx);
     _mWalls = new FlxTilemap();
     _mWalls.loadMapFromArray(cast(_map.getLayer("walls"), TiledTileLayer).tileArray, _map.width, _map.height, AssetPaths.tiles__png, _map.tileWidth, _map.tileHeight, FlxTilemapAutoTiling.OFF, 1, 2, 3);
     _mWalls.follow();
@@ -48,6 +51,8 @@ class PlayState extends FlxState
     FlxG.camera.follow(_player, TOPDOWN, 1);
     _hud = new HUD();
     add(_hud);
+
+    _sndCoin = FlxG.sound.load(AssetPaths.coin__wav);
 		super.create();
 	}
 
@@ -74,6 +79,7 @@ class PlayState extends FlxState
   {
     if (P.alive && P.exists && C.alive && C.exists)
     {
+      _sndCoin.play(true);
       _money++;
       _hud.updateHUD(_health, _money);
       C.kill();
@@ -87,6 +93,12 @@ class PlayState extends FlxState
     FlxG.overlap(_player, _grpCoins, playerTouchCoin);
     FlxG.collide(_grpEnemies, _mWalls);
     _grpEnemies.forEachAlive(checkEnemyVision);
+    if (FlxG.keys.anyPressed([ESCAPE]))
+    {
+      FlxG.camera.fade(FlxColor.BLACK, .33, false, function() {
+        FlxG.switchState(new MenuState());
+      });
+    }
 	}
 
   private function checkEnemyVision(e:Enemy):Void

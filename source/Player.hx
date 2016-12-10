@@ -22,6 +22,7 @@ class Player extends FlxSprite{
     drag.x = drag.y = 1600;
     setSize(8, 14);
     offset.set(4, 2);
+    acceleration.y = 600;
   }
 
   private function movement():Void
@@ -60,11 +61,13 @@ class Player extends FlxSprite{
       else if (_left)
       {
         mA = 180;
+        mA -= 30;
         facing = FlxObject.LEFT;
       }
       else if (_right)
       {
         mA = 0;
+        mA += 30;
         facing = FlxObject.RIGHT;
       }
 
