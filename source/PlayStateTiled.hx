@@ -7,19 +7,19 @@ import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.math.FlxMath;
+import flixel.addons.editors.tiled.TiledMap;
+import flixel.addons.editors.tiled.TiledTileLayer;
+import flixel.addons.editors.tiled.TiledObjectLayer;
+import flixel.tile.FlxTilemap;
+import flixel.tile.FlxBaseTilemap.FlxTilemapAutoTiling;
 import flixel.group.FlxGroup;
 import flixel.util.FlxColor;
 import flixel.system.FlxSound;
 
-import flixel.tile.FlxTilemap;
-import flixel.addons.editors.tiled.TiledMap;
-import flixel.addons.editors.ogmo.FlxOgmoLoader;
-import flixel.addons.editors.tiled.TiledObjectLayer;
-
-class PlayState extends FlxState
+class PlayStateTiled extends FlxState
 {
   private var _player:Player;
-  private var _map:FlxOgmoLoader;
+  private var _map:TiledMap;
   private var _mWalls:FlxTilemap;
   private var _grpCoins:FlxTypedGroup<Coin>;
   private var _grpEnemies:FlxTypedGroup<Enemy>;
@@ -30,49 +30,48 @@ class PlayState extends FlxState
 
 	override public function create():Void
 	{
-    _map = new FlxOgmoLoader(AssetPaths.room_001__oel);
-    _mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
+    _map = new TiledMap(AssetPaths.map2__tmx);
+    _mWalls = new FlxTilemap();
+    _mWalls.loadMapFromArray(cast(_map.getLayer("walls"), TiledTileLayer).tileArray, _map.width, _map.height, AssetPaths.tiles__png, _map.tileWidth, _map.tileHeight, FlxTilemapAutoTiling.OFF, 1, 2, 3);
     _mWalls.follow();
-    _mWalls.setTileProperties(1, FlxObject.NONE);
-    _mWalls.setTileProperties(2, FlxObject.ANY);
+    _mWalls.setTileProperties(2, FlxObject.NONE);
+    _mWalls.setTileProperties(3, FlxObject.ANY);
     add(_mWalls);
-
     _grpCoins = new FlxTypedGroup<Coin>();
     add(_grpCoins);
-
     _grpEnemies = new FlxTypedGroup<Enemy>();
     add(_grpEnemies);
-
     _player = new Player();
-    _map.loadEntities(placeEntities, "entities");
+    var tmpMap:TiledObjectLayer = cast _map.getLayer("entities");
+    for (e in tmpMap.objects)
+    {
+      placeEntities(e.name, e.type, e.xmlData.x);
+    }
     add(_player);
-
     FlxG.camera.follow(_player, TOPDOWN, 1);
-
     _hud = new HUD();
     add(_hud);
 
     _sndCoin = FlxG.sound.load(AssetPaths.coin__wav);
-
-    super.create();
+		super.create();
 	}
 
-  private function placeEntities(entityName:String, entityData:Xml):Void
+  private function placeEntities(entityName:String, entityType:String, entityData:Xml):Void
   {
     var x:Int = Std.parseInt(entityData.get("x"));
     var y:Int = Std.parseInt(entityData.get("y"));
-    if (entityName == "player")
+    if (entityType == "player")
     {
       _player.x = x;
       _player.y = y;
     }
-    else if (entityName == "coin")
+    else if (entityType == "coin")
     {
       _grpCoins.add(new Coin(x + 4, y + 4));
     }
-    else if (entityName == "enemy")
+    else if (entityType == "enemy")
     {
-      _grpEnemies.add(new Enemy(x + 4, y, Std.parseInt(entityData.get("etype"))));
+      _grpEnemies.add(new Enemy(x + 4, y, entityName));
     }
   }
 

@@ -11,7 +11,7 @@ import flixel.math.FlxVelocity;
 class Enemy extends FlxSprite
 {
   public var speed:Float = 140;
-  public var etype(default, null):String;
+  public var etype(default, null):Int;
 
   private var _brain:FSM;
   private var _idleTmr:Float;
@@ -19,7 +19,7 @@ class Enemy extends FlxSprite
   public var seesPlayer:Bool = false;
   public var playerPos(default, null):FlxPoint;
 
-  public function new(?X:Float=0, ?Y:Float=0, EType:String)
+  public function new(?X:Float=0, ?Y:Float=0, EType:Int)
   {
     super(X, Y);
     etype = EType;

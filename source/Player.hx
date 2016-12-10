@@ -7,8 +7,10 @@ import flixel.FlxG;
 import flixel.math.FlxPoint;
 import flixel.FlxObject;
 
-class Player extends FlxSprite{
+class Player extends FlxSprite
+{
   public var speed:Float = 200;
+  // private var _weapon:Rocket;
   public function new(?X:Float=0, ?Y:Float=0)
   {
     super(X, Y);
@@ -23,6 +25,7 @@ class Player extends FlxSprite{
     setSize(8, 14);
     offset.set(4, 2);
     acceleration.y = 600;
+    // _weapon = new Rocket();
   }
 
   private function movement():Void
@@ -87,6 +90,11 @@ class Player extends FlxSprite{
         }
       }
     }
+  }
+
+  public function shoot():Void
+  {
+    // rocket.fire();
   }
 
   override public function update(elapsed:Float):Void
