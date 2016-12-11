@@ -5,8 +5,8 @@
   <BackgroundColor A="255" R="125" G="160" B="255" />
   <GridColor A="255" R="255" G="240" B="90" />
   <LevelDefaultSize>
-    <Width>640</Width>
-    <Height>480</Height>
+    <Width>800</Width>
+    <Height>600</Height>
   </LevelDefaultSize>
   <LevelMinimumSize>
     <Width>640</Width>
@@ -56,6 +56,15 @@
     <Tileset>
       <Name>tiles</Name>
       <FilePath>..\..\images\tiles.png</FilePath>
+      <TileSize>
+        <Width>16</Width>
+        <Height>16</Height>
+      </TileSize>
+      <TileSep>0</TileSep>
+    </Tileset>
+    <Tileset>
+      <Name>concrete</Name>
+      <FilePath>..\..\images\concrete.png</FilePath>
       <TileSize>
         <Width>16</Width>
         <Height>16</Height>
