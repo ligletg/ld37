@@ -103,10 +103,6 @@ class PlayerGroup extends FlxSpriteGroup
   public function shoot(X:Float, Y:Float):Void
   {
     _playerWeapon.shoot(X, Y);
-    // if (_playerWeapon.alive && _playerWeapon.exists)
-    // {
-    //   // _playerWeapon.shoot();
-    // }
   }
 
   public function getPlayer():Player

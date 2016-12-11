@@ -32,35 +32,44 @@ class PlayState extends FlxState
 	override public function create():Void
 	{
     FlxG.watch.addMouse();
+    generateMap();
+    generateItems();
+    generateEntities();
+    generateHUD();
+
+    FlxG.camera.follow(_player, TOPDOWN, 1);
+    super.create();
+	}
+
+  private function generateMap():Void
+  {
     _map = new FlxOgmoLoader(AssetPaths.room_001__oel);
     _mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
     _mWalls.follow();
     _mWalls.setTileProperties(1, FlxObject.NONE);
     _mWalls.setTileProperties(2, FlxObject.ANY);
     add(_mWalls);
+  }
 
+  private function generateItems():Void
+  {
     _grpCoins = new FlxTypedGroup<Coin>();
     add(_grpCoins);
+    _sndCoin = FlxG.sound.load(AssetPaths.coin__wav);
+  }
 
+  private function generateEntities():Void
+  {
     _grpEnemies = new FlxTypedGroup<Enemy>();
     add(_grpEnemies);
 
     _player = new PlayerGroup(this);
     add(_player);
+
     trace(_player.getPlayer());
     _map.loadEntities(placeEntities, "entities");
     trace(_player.getPlayer());
-
-
-    FlxG.camera.follow(_player, TOPDOWN, 1);
-
-    _hud = new HUD();
-    add(_hud);
-
-    _sndCoin = FlxG.sound.load(AssetPaths.coin__wav);
-
-    super.create();
-	}
+  }
 
   private function placeEntities(entityName:String, entityData:Xml):Void
   {
@@ -80,6 +89,12 @@ class PlayState extends FlxState
     }
   }
 
+  private function generateHUD():Void
+  {
+    _hud = new HUD();
+    add(_hud);
+  }
+
   private function playerTouchCoin(P:Player, C:Coin):Void
   {
     if (P.alive && P.exists && C.alive && C.exists)
@@ -95,11 +110,6 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
     FlxG.collide(_player.getPlayer(), _mWalls);
-    // var projectile = _player.getWeapon().getProjectile();
-    // if (projectile != null && _mWalls.overlapsWithCallback(projectile))
-    // {
-    //   _player.getWeapon().addImpact();
-    // }
     FlxG.overlap(_player.getPlayer(), _grpCoins, playerTouchCoin);
     FlxG.collide(_grpEnemies, _mWalls);
     _grpEnemies.forEachAlive(checkEnemyVision);
