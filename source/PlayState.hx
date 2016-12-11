@@ -137,6 +137,10 @@ class PlayState extends FlxState
         _player.shoot(impactLocation.x, impactLocation.y);
       }
     }
+    else
+    {
+      _player.shoot(FlxG.mouse.getPosition().x, FlxG.mouse.getPosition().y);
+    }
   }
 
   private function checkEnemyVision(e:Enemy):Void

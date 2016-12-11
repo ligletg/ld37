@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.util.FlxColor;
 
@@ -106,10 +107,19 @@ class Impact extends FlxSprite
       91
     ];
     animation.add("explosion", animArray, 90, false);
-    animation.finishCallback = animationCallback;
+    animation.callback = animationRuns;
+    animation.finishCallback = animationEnd;
   }
 
-  private function animationCallback(name:String):Void
+  private function animationRuns(name:String, frame:Int, index:Int)
+  {
+    if (name == "explosion" && frame == 0)
+    {
+      FlxG.camera.shake(0.01, 0.2);
+    }
+  }
+
+  private function animationEnd(name:String):Void
   {
     if (name == "explosion")
     {

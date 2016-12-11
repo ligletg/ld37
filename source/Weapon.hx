@@ -15,7 +15,7 @@ class Weapon extends FlxSpriteGroup
 {
   public var speed:Float = 200;
   private var _sprWeapon:FlxSprite;
-  private var _sprProjectile:FlxSprite;
+  private var _projectile:Projectile;
   public var isShooting:Bool = false;
   public var playState:PlayState;
   public function new(playstate:PlayState)
@@ -23,12 +23,10 @@ class Weapon extends FlxSpriteGroup
     super();
     playState = playstate;
     _sprWeapon = new FlxSprite().makeGraphic(4, 4, FlxColor.RED);
-    // _sprProjectile = new FlxSprite().makeGraphic(4, 4, FlxColor.BLUE);
+    // _projectile = new FlxSprite().makeGraphic(4, 4, FlxColor.BLUE);
     add(_sprWeapon);
     FlxG.watch.add(_sprWeapon, "x");
     FlxG.watch.add(_sprWeapon, "y");
-    FlxG.watch.add(_sprProjectile, "x");
-    FlxG.watch.add(_sprProjectile, "y");
     // drag.x = drag.y = 1600;
     // setSize(8, 14);
     // offset.set(4, 2);
@@ -42,7 +40,7 @@ class Weapon extends FlxSpriteGroup
 
   public function getProjectile():FlxSprite
   {
-    return _sprProjectile;
+    return _projectile;
   }
 
   public function addImpact(tween:FlxTween):Void
@@ -51,15 +49,15 @@ class Weapon extends FlxSpriteGroup
     var impact = new Impact();
     // add(impact);
     playState.add(impact);
-    impact.x = _sprProjectile.x;
-    impact.y = _sprProjectile.y;
+    impact.x = _projectile.x;
+    impact.y = _projectile.y;
     impact.animation.play("explosion");
-    trace("impact " + _sprProjectile.x + " / " + _sprProjectile.y);
+    trace("impact " + _projectile.x + " / " + _projectile.y);
     FlxG.watch.add(impact, "x");
     FlxG.watch.add(impact, "y");
-    _sprProjectile.kill();
-    _sprProjectile.destroy();
-    _sprProjectile = null;
+    _projectile.kill();
+    _projectile.destroy();
+    _projectile = null;
   }
 
   public function shoot(X:Float, Y:Float):Void
@@ -70,41 +68,51 @@ class Weapon extends FlxSpriteGroup
     }
     isShooting = true;
 
-    if (_sprProjectile != null)
+    if (_projectile != null)
     {
-      _sprProjectile.kill();
-      _sprProjectile.destroy();
-      _sprProjectile = null;
+      _projectile.alive = false;
+      _projectile.exists = false;
+      // _projectile.kill();
+      // _projectile.destroy();
+      _projectile = null;
     }
 
-    _sprProjectile = new FlxSprite().makeGraphic(4, 4, FlxColor.BLUE);
-    add(_sprProjectile);
-    _sprProjectile.x = _sprWeapon.x;
-    _sprProjectile.y = _sprWeapon.y;
+    // _projectile = new FlxSprite().makeGraphic(4, 4, FlxColor.BLUE);
+    _projectile = new Projectile();
+
+    // _projectile.x = _sprWeapon.x;
+    // _projectile.y = _sprWeapon.y;
+    // trace("new projectile origin", _projectile.x, _projectile.y);
+    add(_projectile);
+    _projectile.fire(X, Y);
 
     // FlxTween.linearMotion(
-    //   _sprProjectile, {x: cast (x, Float), y: cast (y, Float)}, 3.0, {
+    //   _projectile, {x: cast (x, Float), y: cast (y, Float)}, 3.0, {
     //   ease: FlxEase.cubeIn
     // });
 
-    trace("destination = " + X + " / " + Y);
+    // _projectile.rotate(FlxPoint.weak(0, 0),
+// FlxAngle.angleBetweenPoint(_projectile, FlxPoint.get(X, Y), true));
+    // trace(FlxAngle.angleBetweenPoint(_projectile, FlxPoint.get(X, Y), true));
 
+    // trace("destination = " + X + " / " + Y);
+    //
     FlxTween.linearMotion(
-      _sprProjectile,
-      cast(_sprProjectile.x, Float),
-      cast(_sprProjectile.y, Float),
+      _projectile,
+      cast(_sprWeapon.x, Float),
+      cast(_sprWeapon.y, Float),
       X,
       Y,
-      800.0,
+      400.0,
       false,
       {
         onComplete: addImpact
       }
     );
-    // _sprProjectile.y = y;
-    // _sprProjectile.x = _sprWeapon.x + 4;
-    // _sprProjectile.y = _sprWeapon.y;
-    // add(_sprProjectile);
+    // _projectile.y = y;
+    // _projectile.x = _sprWeapon.x + 4;
+    // _projectile.y = _sprWeapon.y;
+    // add(_projectile);
   }
 
   public function move(mA:Float, facing:Int):Void
