@@ -11,21 +11,27 @@ class PlayerGroup extends FlxSpriteGroup
 {
   private var _player:Player;
   private var _playerWeapon:Weapon;
+  public var playState:PlayState;
 
   public var speed:Float = 200;
   // public var acceleration:FlxPoint = new FlxPoint(0, 600);
   // public var drag:FlxPoint = new FlxPoint(1600);
 
-  public function new()
+  public function new(playstate:PlayState)
   {
     super();
 
 
-
+    playState = playstate;
     _player = new Player();
     FlxG.watch.add(_player, "x");
     FlxG.watch.add(_player, "y");
     add(_player);
+
+    _playerWeapon = new Weapon(playstate);
+    FlxG.watch.add(_playerWeapon, "x");
+    FlxG.watch.add(_playerWeapon, "y");
+    add(_playerWeapon);
   }
 
   private function movement():Void
@@ -76,25 +82,27 @@ class PlayerGroup extends FlxSpriteGroup
       }
 
       _player.move(mA, _facing);
+      // _playerWeapon.move(mA, _facing);
     }
   }
 
   private function updatePlayer():Void
   {
-    if (_player.hasWeapon)
-    {
-      _playerWeapon.x = _player.getMidpoint().x;
-      _playerWeapon.y = _player.getMidpoint().y;
-      add(_playerWeapon);
-    }
+    // if (_player.hasWeapon)
+    // {
+    //   if (!_playerWeapon.exists)
+    //   {
+    //     _playerWeapon = new Weapon();
+    //     add(_playerWeapon);
+    //   }
+    //   _playerWeapon.getWeapon().x = _player.getMidpoint().x;
+    //   _playerWeapon.getWeapon().y = _player.getMidpoint().y;
+    // }
   }
 
-  public function shoot():Void
+  public function shoot(X:Float, Y:Float):Void
   {
-    if (_playerWeapon.alive && _playerWeapon.exists)
-    {
-      _playerWeapon.shoot();
-    }
+    _playerWeapon.shoot(X, Y);
   }
 
   public function getPlayer():Player
@@ -102,10 +110,17 @@ class PlayerGroup extends FlxSpriteGroup
     return _player;
   }
 
+  public function getWeapon():Weapon
+  {
+    return _playerWeapon;
+  }
+
   override public function update(elapsed:Float):Void
   {
     // updatePlayer();
     movement();
+    _playerWeapon.x = _player.x;
+    _playerWeapon.y = _player.y;
     // x = _player.x;
     super.update(elapsed);
   }

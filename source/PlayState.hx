@@ -10,6 +10,7 @@ import flixel.math.FlxMath;
 import flixel.group.FlxGroup;
 import flixel.util.FlxColor;
 import flixel.system.FlxSound;
+import flixel.math.FlxPoint;
 
 import flixel.tile.FlxTilemap;
 import flixel.addons.editors.tiled.TiledMap;
@@ -30,39 +31,45 @@ class PlayState extends FlxState
 
 	override public function create():Void
 	{
+    FlxG.watch.addMouse();
+    generateMap();
+    generateItems();
+    generateEntities();
+    generateHUD();
+
+    FlxG.camera.follow(_player, TOPDOWN, 1);
+    super.create();
+	}
+
+  private function generateMap():Void
+  {
     _map = new FlxOgmoLoader(AssetPaths.room_001__oel);
     _mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
     _mWalls.follow();
     _mWalls.setTileProperties(1, FlxObject.NONE);
     _mWalls.setTileProperties(2, FlxObject.ANY);
     add(_mWalls);
+  }
 
+  private function generateItems():Void
+  {
     _grpCoins = new FlxTypedGroup<Coin>();
     add(_grpCoins);
+    _sndCoin = FlxG.sound.load(AssetPaths.coin__wav);
+  }
 
+  private function generateEntities():Void
+  {
     _grpEnemies = new FlxTypedGroup<Enemy>();
     add(_grpEnemies);
-    FlxG.watch.add(_grpEnemies, "x");
-    FlxG.watch.add(_grpEnemies, "y");
 
-    _player = new PlayerGroup();
-    FlxG.watch.add(_player, "x");
-    FlxG.watch.add(_player, "y");
+    _player = new PlayerGroup(this);
     add(_player);
+
     trace(_player.getPlayer());
     _map.loadEntities(placeEntities, "entities");
     trace(_player.getPlayer());
-
-
-    FlxG.camera.follow(_player, TOPDOWN, 1);
-
-    _hud = new HUD();
-    add(_hud);
-
-    _sndCoin = FlxG.sound.load(AssetPaths.coin__wav);
-
-    super.create();
-	}
+  }
 
   private function placeEntities(entityName:String, entityData:Xml):Void
   {
@@ -80,6 +87,12 @@ class PlayState extends FlxState
     {
       _grpEnemies.add(new Enemy(x + 4, y, Std.parseInt(entityData.get("etype"))));
     }
+  }
+
+  private function generateHUD():Void
+  {
+    _hud = new HUD();
+    add(_hud);
   }
 
   private function playerTouchCoin(P:Player, C:Coin):Void
@@ -106,11 +119,29 @@ class PlayState extends FlxState
         FlxG.switchState(new MenuState());
       });
     }
-    if (FlxG.mouse.pressed)
+    if (FlxG.mouse.justPressed)
     {
-      // _player.shoot();
+      playerShoot();
     }
 	}
+
+  private function playerShoot():Void
+  {
+    var weapon:Weapon = _player.getWeapon();
+    var impactLocation:FlxPoint = new FlxPoint();
+    trace("playerShoot ", weapon.getPosition(), FlxG.mouse.getPosition());
+    if (!_mWalls.ray(weapon.getPosition(), FlxG.mouse.getPosition(), impactLocation, 100)) {
+      trace("ray " + impactLocation);
+      if (impactLocation != null)
+      {
+        _player.shoot(impactLocation.x, impactLocation.y);
+      }
+    }
+    else
+    {
+      _player.shoot(FlxG.mouse.getPosition().x, FlxG.mouse.getPosition().y);
+    }
+  }
 
   private function checkEnemyVision(e:Enemy):Void
   {
