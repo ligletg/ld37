@@ -10,6 +10,7 @@ import flixel.math.FlxMath;
 import flixel.group.FlxGroup;
 import flixel.util.FlxColor;
 import flixel.system.FlxSound;
+import flixel.math.FlxPoint;
 
 import flixel.tile.FlxTilemap;
 import flixel.addons.editors.tiled.TiledMap;
@@ -42,12 +43,8 @@ class PlayState extends FlxState
 
     _grpEnemies = new FlxTypedGroup<Enemy>();
     add(_grpEnemies);
-    FlxG.watch.add(_grpEnemies, "x");
-    FlxG.watch.add(_grpEnemies, "y");
 
     _player = new PlayerGroup();
-    FlxG.watch.add(_player, "x");
-    FlxG.watch.add(_player, "y");
     add(_player);
     trace(_player.getPlayer());
     _map.loadEntities(placeEntities, "entities");
@@ -97,6 +94,11 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
     FlxG.collide(_player.getPlayer(), _mWalls);
+    // var projectile = _player.getWeapon().getProjectile();
+    // if (projectile != null && _mWalls.overlapsWithCallback(projectile))
+    // {
+    //   _player.getWeapon().addImpact();
+    // }
     FlxG.overlap(_player.getPlayer(), _grpCoins, playerTouchCoin);
     FlxG.collide(_grpEnemies, _mWalls);
     _grpEnemies.forEachAlive(checkEnemyVision);
@@ -106,11 +108,25 @@ class PlayState extends FlxState
         FlxG.switchState(new MenuState());
       });
     }
-    if (FlxG.mouse.pressed)
+    if (FlxG.mouse.justPressed)
     {
-      // _player.shoot();
+      playerShoot();
     }
 	}
+
+  private function playerShoot():Void
+  {
+    var weapon:Weapon = _player.getWeapon();
+    var impactLocation:FlxPoint = new FlxPoint();
+    trace("playerShoot ", weapon.getMidpoint(), FlxG.mouse.getPosition());
+    if (!_mWalls.ray(weapon.getMidpoint(), FlxG.mouse.getPosition(), impactLocation)) {
+      trace("ray " + impactLocation);
+      if (impactLocation != null)
+      {
+        _player.shoot(impactLocation.x, impactLocation.y);  
+      }
+    }
+  }
 
   private function checkEnemyVision(e:Enemy):Void
   {
