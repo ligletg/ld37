@@ -17,9 +17,11 @@ class Weapon extends FlxSpriteGroup
   private var _sprWeapon:FlxSprite;
   private var _sprProjectile:FlxSprite;
   public var isShooting:Bool = false;
-  public function new()
+  public var playState:PlayState;
+  public function new(playstate:PlayState)
   {
     super();
+    playState = playstate;
     _sprWeapon = new FlxSprite().makeGraphic(4, 4, FlxColor.RED);
     // _sprProjectile = new FlxSprite().makeGraphic(4, 4, FlxColor.BLUE);
     add(_sprWeapon);
@@ -47,7 +49,8 @@ class Weapon extends FlxSpriteGroup
   {
     isShooting = false;
     var impact = new Impact();
-    add(impact);
+    // add(impact);
+    playState.add(impact);
     impact.x = _sprProjectile.x;
     impact.y = _sprProjectile.y;
     trace("impact " + _sprProjectile.x + " / " + _sprProjectile.y);

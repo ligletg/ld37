@@ -31,6 +31,7 @@ class PlayState extends FlxState
 
 	override public function create():Void
 	{
+    FlxG.watch.addMouse();
     _map = new FlxOgmoLoader(AssetPaths.room_001__oel);
     _mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
     _mWalls.follow();
@@ -44,7 +45,7 @@ class PlayState extends FlxState
     _grpEnemies = new FlxTypedGroup<Enemy>();
     add(_grpEnemies);
 
-    _player = new PlayerGroup();
+    _player = new PlayerGroup(this);
     add(_player);
     trace(_player.getPlayer());
     _map.loadEntities(placeEntities, "entities");
@@ -118,12 +119,12 @@ class PlayState extends FlxState
   {
     var weapon:Weapon = _player.getWeapon();
     var impactLocation:FlxPoint = new FlxPoint();
-    trace("playerShoot ", weapon.getMidpoint(), FlxG.mouse.getPosition());
-    if (!_mWalls.ray(weapon.getMidpoint(), FlxG.mouse.getPosition(), impactLocation)) {
+    trace("playerShoot ", weapon.getPosition(), FlxG.mouse.getPosition());
+    if (!_mWalls.ray(weapon.getPosition(), FlxG.mouse.getPosition(), impactLocation, 100)) {
       trace("ray " + impactLocation);
       if (impactLocation != null)
       {
-        _player.shoot(impactLocation.x, impactLocation.y);  
+        _player.shoot(impactLocation.x, impactLocation.y);
       }
     }
   }

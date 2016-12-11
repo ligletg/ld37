@@ -11,23 +11,24 @@ class PlayerGroup extends FlxSpriteGroup
 {
   private var _player:Player;
   private var _playerWeapon:Weapon;
+  public var playState:PlayState;
 
   public var speed:Float = 200;
   // public var acceleration:FlxPoint = new FlxPoint(0, 600);
   // public var drag:FlxPoint = new FlxPoint(1600);
 
-  public function new()
+  public function new(playstate:PlayState)
   {
     super();
 
 
-
+    playState = playstate;
     _player = new Player();
     FlxG.watch.add(_player, "x");
     FlxG.watch.add(_player, "y");
     add(_player);
 
-    _playerWeapon = new Weapon();
+    _playerWeapon = new Weapon(playstate);
     FlxG.watch.add(_playerWeapon, "x");
     FlxG.watch.add(_playerWeapon, "y");
     add(_playerWeapon);
