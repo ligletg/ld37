@@ -37,17 +37,23 @@ class PlayState extends FlxState
     generateEntities();
     generateHUD();
 
-    FlxG.camera.follow(_player, TOPDOWN, 1);
+    FlxG.camera.follow(_player.getPlayer(), TOPDOWN, 1);
     super.create();
 	}
 
   private function generateMap():Void
   {
-    _map = new FlxOgmoLoader(AssetPaths.room_001__oel);
-    _mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
+    _map = new FlxOgmoLoader(AssetPaths.room_002__oel);
+    // _mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
+    _mWalls = _map.loadTilemap(AssetPaths.textures__png, 16, 16, "walls");
     _mWalls.follow();
-    _mWalls.setTileProperties(1, FlxObject.NONE);
-    _mWalls.setTileProperties(2, FlxObject.ANY);
+    _mWalls.setTileProperties(1, FlxObject.NONE); //sky
+    _mWalls.setTileProperties(2, FlxObject.ANY); //dark wood
+    _mWalls.setTileProperties(3, FlxObject.ANY); //stone
+    _mWalls.setTileProperties(6, FlxObject.NONE); //yellow wood
+    _mWalls.setTileProperties(7, FlxObject.ANY); //half wood
+    _mWalls.setTileProperties(8, FlxObject.ANY); //half wood2
+    _mWalls.setTileProperties(9, FlxObject.ANY); //grass
     add(_mWalls);
   }
 
