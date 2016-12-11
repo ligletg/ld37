@@ -9,6 +9,8 @@ class Impact extends FlxSprite
   {
     super(X, Y);
     loadGraphic(AssetPaths.explosion__png, true, 16, 16);
+    setSize(8, 8);
+    offset.set(4, 4);
     var animArray:Array<Int> = [
       0,
       1,
@@ -103,7 +105,16 @@ class Impact extends FlxSprite
       90,
       91
     ];
-    animation.add("explosion", animArray, 30, false);
-    // makeGraphic(4, 4, FlxColor.YELLOW);
+    animation.add("explosion", animArray, 90, false);
+    animation.finishCallback = animationCallback;
+  }
+
+  private function animationCallback(name:String):Void
+  {
+    if (name == "explosion")
+    {
+      alive = false;
+      exists = false;
+    }
   }
 }
