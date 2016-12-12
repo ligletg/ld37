@@ -51,7 +51,7 @@ class Weapon extends FlxSpriteGroup
     playState.add(impact);
     impact.x = _projectile.x;
     impact.y = _projectile.y;
-    impact.animation.play("explosion");
+    // impact.animation.play("explosion");
     trace("impact " + _projectile.x + " / " + _projectile.y);
     FlxG.watch.add(impact, "x");
     FlxG.watch.add(impact, "y");

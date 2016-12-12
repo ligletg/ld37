@@ -13,6 +13,7 @@ class MenuState extends FlxState
   private var _btnPlay:FlxButton;
 	override public function create():Void
 	{
+    bgColor = FlxColor.BLACK;
     // add(new FlxText(0, 0, 0, "Play !"));
     _btnPlay = new FlxButton(0, 0, "Play !", clickPLay);
     _btnPlay.screenCenter();

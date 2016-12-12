@@ -33,6 +33,7 @@ class PlayState extends FlxState
 
 	override public function create():Void
 	{
+    bgColor = FlxColor.BLACK;
     // FlxG.watch.addMouse();
     generateMap();
     generateItems();

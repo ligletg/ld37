@@ -14,12 +14,12 @@ class Coin extends FlxSprite
   {
     super(X, Y);
     loadGraphic(AssetPaths.coin__png, false, 8, 8);
-    _sndCoin = FlxG.sound.load(AssetPaths.coin__wav);
+    // _sndCoin = FlxG.sound.load(AssetPaths.coin__wav);
   }
 
   override public function kill():Void
   {
-    _sndCoin.play(true);
+    // _sndCoin.play(true);
     alive = false;
     FlxTween.tween(this, {alpha: 0, y: y - 16}, .33, { ease: FlxEase.circOut, onComplete: finishKill});
   }
