@@ -8,8 +8,8 @@ import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.math.FlxMath;
 import flixel.group.FlxGroup;
+import flixel.group.FlxSpriteGroup;
 import flixel.util.FlxColor;
-import flixel.system.FlxSound;
 import flixel.math.FlxPoint;
 
 import flixel.tile.FlxTilemap;
@@ -23,11 +23,12 @@ class PlayState extends FlxState
   private var _map:FlxOgmoLoader;
   private var _mWalls:FlxTilemap;
   private var _grpCoins:FlxTypedGroup<Coin>;
+  // private var _pickupGroup:FlxSpriteGroup;
+  private var _exit:Exit;
   private var _grpEnemies:FlxTypedGroup<Enemy>;
   private var _hud:HUD;
   private var _money:Int = 0;
   private var _health:Int = 3;
-  private var _sndCoin:FlxSound;
 
 	override public function create():Void
 	{
@@ -43,25 +44,20 @@ class PlayState extends FlxState
 
   private function generateMap():Void
   {
-    _map = new FlxOgmoLoader(AssetPaths.room_002__oel);
-    // _mWalls = _map.loadTilemap(AssetPaths.tiles__png, 16, 16, "walls");
+    _map = new FlxOgmoLoader(AssetPaths.room_003__oel);
     _mWalls = _map.loadTilemap(AssetPaths.textures__png, 16, 16, "walls");
     _mWalls.follow();
-    _mWalls.setTileProperties(1, FlxObject.NONE); //sky
-    _mWalls.setTileProperties(2, FlxObject.ANY); //dark wood
-    _mWalls.setTileProperties(3, FlxObject.ANY); //stone
-    _mWalls.setTileProperties(6, FlxObject.NONE); //yellow wood
-    _mWalls.setTileProperties(7, FlxObject.ANY); //half wood
-    _mWalls.setTileProperties(8, FlxObject.ANY); //half wood2
-    _mWalls.setTileProperties(9, FlxObject.ANY); //grass
+    _mWalls.setTileProperties(6, FlxObject.NONE);
+    _mWalls.setTileProperties(2, FlxObject.ANY);
     add(_mWalls);
   }
 
   private function generateItems():Void
   {
+    // _pickupGroup = new FlxSpriteGroup();
+    // add(_pickupGroup);
     _grpCoins = new FlxTypedGroup<Coin>();
     add(_grpCoins);
-    _sndCoin = FlxG.sound.load(AssetPaths.coin__wav);
   }
 
   private function generateEntities():Void
@@ -81,17 +77,27 @@ class PlayState extends FlxState
   {
     var x:Int = Std.parseInt(entityData.get("x"));
     var y:Int = Std.parseInt(entityData.get("y"));
+    var type = Std.parseInt(entityData.get("type"));
+
     if (entityName == "player")
     {
       _player.getPlayer().setPosition(x, y);
     }
-    else if (entityName == "coin")
+    else if (entityName == "pickup")
     {
-      _grpCoins.add(new Coin(x + 4, y + 4));
+      if (type == 1)
+      {
+        _exit = new Exit(x + 4, y + 4);
+        add(_exit);
+      }
+      else if (type == 0)
+      {
+        _grpCoins.add(new Coin(x + 4, y + 4));
+      }
     }
     else if (entityName == "enemy")
     {
-      _grpEnemies.add(new Enemy(x + 4, y, Std.parseInt(entityData.get("etype"))));
+      _grpEnemies.add(new Enemy(x + 4, y, Std.parseInt(entityData.get("type"))));
     }
   }
 
@@ -105,11 +111,17 @@ class PlayState extends FlxState
   {
     if (P.alive && P.exists && C.alive && C.exists)
     {
-      _sndCoin.play(true);
       _money++;
       _hud.updateHUD(_health, _money);
       C.kill();
     }
+  }
+
+  private function playerExit(P:Player, E:Exit):Void
+  {
+    FlxG.camera.fade(FlxColor.BLACK, .33, false, function() {
+      FlxG.switchState(new MenuState());
+    });
   }
 
 	override public function update(elapsed:Float):Void
@@ -117,6 +129,7 @@ class PlayState extends FlxState
 		super.update(elapsed);
     FlxG.collide(_player.getPlayer(), _mWalls);
     FlxG.overlap(_player.getPlayer(), _grpCoins, playerTouchCoin);
+    FlxG.overlap(_player.getPlayer(), _exit, playerExit);
     FlxG.collide(_grpEnemies, _mWalls);
     _grpEnemies.forEachAlive(checkEnemyVision);
     if (FlxG.keys.anyPressed([ESCAPE]))
