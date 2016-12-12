@@ -25,6 +25,7 @@ class PlayState extends FlxState
   private var _grpCoins:FlxTypedGroup<Coin>;
   // private var _pickupGroup:FlxSpriteGroup;
   private var _exit:Exit;
+  private var _window:Window;
   private var _grpEnemies:FlxTypedGroup<Enemy>;
   private var _hud:HUD;
   private var _money:Int = 0;
@@ -99,6 +100,11 @@ class PlayState extends FlxState
     {
       _grpEnemies.add(new Enemy(x + 4, y));
     }
+    else if (entityName == "window")
+    {
+      _window = new Window(x, y);
+      add(_window);
+    }
   }
 
   private function generateHUD():Void
@@ -120,7 +126,7 @@ class PlayState extends FlxState
   private function playerExit(P:Player, E:Exit):Void
   {
     FlxG.camera.fade(FlxColor.BLACK, .33, false, function() {
-      FlxG.switchState(new MenuState());
+      FlxG.switchState(new GameWinState());
     });
   }
 
@@ -130,6 +136,7 @@ class PlayState extends FlxState
     FlxG.collide(_player.getPlayer(), _mWalls);
     FlxG.overlap(_player.getPlayer(), _grpCoins, playerTouchCoin);
     FlxG.overlap(_player.getPlayer(), _exit, playerExit);
+    FlxG.overlap(_player.getPlayer(), _window, playerExit);
     FlxG.collide(_grpEnemies, _mWalls);
     _grpEnemies.forEachAlive(checkEnemyVision);
     if (FlxG.keys.anyPressed([ESCAPE]))
