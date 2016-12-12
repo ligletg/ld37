@@ -24,13 +24,13 @@ class PlayerGroup extends FlxSpriteGroup
 
     playState = playstate;
     _player = new Player();
-    FlxG.watch.add(_player, "x");
-    FlxG.watch.add(_player, "y");
+    // FlxG.watch.add(_player, "x");
+    // FlxG.watch.add(_player, "y");
     add(_player);
 
     _playerWeapon = new Weapon(playstate);
-    FlxG.watch.add(_playerWeapon, "x");
-    FlxG.watch.add(_playerWeapon, "y");
+    // FlxG.watch.add(_playerWeapon, "x");
+    // FlxG.watch.add(_playerWeapon, "y");
     add(_playerWeapon);
   }
 
@@ -71,13 +71,13 @@ class PlayerGroup extends FlxSpriteGroup
       else if (_left)
       {
         mA = 180;
-        mA -= 30;
+        // mA -= 30;
         _facing = FlxObject.LEFT;
       }
       else if (_right)
       {
         mA = 0;
-        mA += 30;
+        // mA += 30;
         _facing = FlxObject.RIGHT;
       }
 

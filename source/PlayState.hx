@@ -32,7 +32,7 @@ class PlayState extends FlxState
 
 	override public function create():Void
 	{
-    FlxG.watch.addMouse();
+    // FlxG.watch.addMouse();
     generateMap();
     generateItems();
     generateEntities();
@@ -97,7 +97,7 @@ class PlayState extends FlxState
     }
     else if (entityName == "enemy")
     {
-      _grpEnemies.add(new Enemy(x + 4, y, Std.parseInt(entityData.get("type"))));
+      _grpEnemies.add(new Enemy(x + 4, y));
     }
   }
 

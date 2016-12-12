@@ -22,7 +22,7 @@ class Weapon extends FlxSpriteGroup
   {
     super();
     playState = playstate;
-    _sprWeapon = new FlxSprite().makeGraphic(4, 4, FlxColor.RED);
+    _sprWeapon = new FlxSprite().makeGraphic(4, 4, FlxColor.TRANSPARENT);
     // _projectile = new FlxSprite().makeGraphic(4, 4, FlxColor.BLUE);
     add(_sprWeapon);
     FlxG.watch.add(_sprWeapon, "x");
