@@ -13,6 +13,7 @@ class GameWinState extends FlxState
 {
 	override public function create():Void
 	{
+    bgColor = FlxColor.GREEN;
     var text:FlxText = new FlxText(0, 0, 0, "Congratulations, you won !", 30);
     var playAgainBtn = new FlxButton(0, 0, "Play again !", clickPLay);
     var returnMenuBtn = new FlxButton(0, 0, "Return to menu", clickMenu);
